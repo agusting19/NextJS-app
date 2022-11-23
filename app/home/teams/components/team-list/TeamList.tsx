@@ -7,6 +7,7 @@ import {
   CardActions,
   CardHeader,
   CardMedia,
+  Pagination,
   Typography,
 } from "@mui/material";
 import styledComponents from "styled-components";
@@ -17,19 +18,37 @@ const CardContainer = styledComponents.div`
   gap: 1rem;
 `;
 
+const PaginationContainer = styledComponents.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
 interface Props {
   teams: Teams;
 }
 
 function TeamList({ teams }: Props) {
+  const [onDisplay, setOnDisplay] = useState(teams.slice(0, 5));
+
   const handleClick = (website: string) => {
     window.open(website, "_blank");
   };
 
+  const handlePagination = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    const beginning = page - 1;
+    const final = beginning + 5;
+
+    setOnDisplay(teams.slice(beginning, final));
+  };
+
   return (
-    <>
+    <PaginationContainer>
       <CardContainer>
-        {teams.map((team) => {
+        {onDisplay.map((team) => {
           return (
             <Card key={team.id}>
               <CardHeader title={team.name} />
@@ -51,7 +70,12 @@ function TeamList({ teams }: Props) {
           );
         })}
       </CardContainer>
-    </>
+      <Pagination
+        count={teams.length}
+        onChange={handlePagination}
+        color="primary"
+      />
+    </PaginationContainer>
   );
 }
 
